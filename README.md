@@ -27,9 +27,11 @@ npm run apk:debug
 APK releases are built by GitHub Actions.
 
 1. Push to `main`
-2. Open GitHub Actions
-3. Run `APK Release`
-4. Optionally enter a tag like `v0.1.0`
+2. Push a tag like `v0.1.0`
+3. GitHub Actions runs `APK Release`
+4. The APK is attached to the GitHub Release
+
+You can also open GitHub Actions and run `APK Release` manually.
 
 The current workflow builds a debug APK and attaches it to a GitHub Release. For a production signed APK, add Android keystore secrets and change the Gradle step to `assembleRelease`.
 
