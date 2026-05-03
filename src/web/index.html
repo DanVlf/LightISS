@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LightISS</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ8LG4QwBLw1kZTA4I6Qpi8zLPmG8P4=" crossorigin="">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="appHeader">
+        <button id="cityButton" class="headerButton" type="button" aria-label="Set city">City</button>
+        <h1><button id="pageButton" class="titleButton" type="button">Passes</button></h1>
+        <button id="refreshButton" class="headerButton" type="button" aria-label="Refresh ISS">Sync</button>
+      </section>
+
+      <section id="mapPage" class="page isActive">
+        <section class="mapPanel" aria-label="ISS map">
+          <div id="mapView"></div>
+          <canvas id="mapCanvas" width="720" height="720"></canvas>
+          <button id="locateButton" class="mapButton" type="button" aria-label="Use location">Locate</button>
+          <span id="statusLabel" class="statusPill" aria-label="Signal status">IDLE</span>
+          <p id="mapStatus">Map tiles need internet</p>
+        </section>
+
+        <section class="telemetryPanel">
+          <div class="metric wide">
+            <span>City</span>
+            <strong id="cityName">Prague</strong>
+          </div>
+          <div class="metric">
+            <span>Distance</span>
+            <strong id="distanceLabel">--</strong>
+          </div>
+          <div class="metric">
+            <span>Bearing</span>
+            <strong id="bearingLabel">--</strong>
+          </div>
+          <div class="metric">
+            <span>Altitude</span>
+            <strong id="altitudeLabel">--</strong>
+          </div>
+          <div class="metric">
+            <span>Speed</span>
+            <strong id="speedLabel">--</strong>
+          </div>
+          <div class="metric wide">
+            <span>Closest</span>
+            <strong id="closestLabel">--</strong>
+          </div>
+          <div class="metric wide">
+            <span>Updated</span>
+            <strong id="updatedLabel">--</strong>
+          </div>
+        </section>
+      </section>
+
+      <section id="passesPage" class="page passesPage">
+        <section class="radioPanel">
+          <div>
+            <span>RX</span>
+            <strong>145.800 FM</strong>
+          </div>
+          <div>
+            <span>Packet</span>
+            <strong>145.825</strong>
+          </div>
+        </section>
+        <ol id="passesList" class="passesList"></ol>
+      </section>
+
+      <section id="cityPanel" class="cityPanel" hidden>
+        <form id="cityForm">
+          <button id="dismissKeyboardButton" class="keyboardButton" type="button" aria-label="Hide keyboard">v</button>
+          <label>
+            City
+            <input id="cityInput" name="city" autocomplete="off" required>
+          </label>
+          <div class="grid">
+            <label>
+              Latitude
+              <input id="latInput" name="lat" inputmode="decimal">
+            </label>
+            <label>
+              Longitude
+              <input id="lngInput" name="lng" inputmode="decimal">
+            </label>
+          </div>
+          <section id="presetList" class="presetList" aria-label="City presets"></section>
+          <div class="controls">
+            <button type="submit">Set</button>
+            <button id="searchCityButton" type="button">Search</button>
+            <button id="closeCityButton" type="button">Close</button>
+          </div>
+        </form>
+      </section>
+
+      <p id="toast" class="toast" hidden></p>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="app.js"></script>
+  </body>
+</html>

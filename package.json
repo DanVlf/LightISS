@@ -1,0 +1,27 @@
+{
+  "name": "lightiss",
+  "main": "index.js",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "expo run:android",
+    "android": "expo run:android",
+    "prebuild:android": "expo prebuild --platform android",
+    "apk:debug": "cd android && gradlew.bat assembleDebug",
+    "apk:release": "cd android && gradlew.bat assembleRelease",
+    "sync-web": "node scripts/build-web-content.js",
+    "web:check": "node scripts/build-web-content.js"
+  },
+  "dependencies": {
+    "expo": "~54.0.31",
+    "expo-location": "~19.0.8",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-webview": "^13.16.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.6",
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
+  }
+}

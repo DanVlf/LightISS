@@ -1,0 +1,627 @@
+:root {
+  color-scheme: light;
+  --black: #050505;
+  --dark: #171717;
+  --mid: #6f6f6f;
+  --soft: #c8c8c8;
+  --line: #292929;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  background: var(--black);
+  color: var(--white);
+  font-family: "Public Sans", Arial, Helvetica, sans-serif;
+  touch-action: manipulation;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 0;
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+}
+
+button:active {
+  text-decoration: underline;
+}
+
+.shell {
+  width: min(100vw, 390px);
+  height: 100dvh;
+  min-height: 100vh;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: 46px minmax(0, 1fr);
+  background: var(--black);
+  overflow: hidden;
+  position: relative;
+}
+
+.appHeader {
+  display: grid;
+  grid-template-columns: 82px 1fr 82px;
+  align-items: center;
+  min-height: 46px;
+  padding: 4px 14px 2px;
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+h1 {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.titleButton {
+  min-height: 40px;
+  max-width: 120px;
+  padding: 0 8px;
+  font-size: 20px;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headerButton {
+  width: 82px;
+  min-height: 40px;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+}
+
+#refreshButton {
+  text-align: right;
+}
+
+#cityButton {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page {
+  min-height: 0;
+  display: none;
+  overflow: hidden;
+}
+
+.page.isActive {
+  display: grid;
+}
+
+#mapPage {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.mapPanel {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+#mapView,
+#mapCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#mapView {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--white);
+}
+
+#mapCanvas {
+  position: absolute;
+  inset: 0;
+}
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.leaflet-container {
+  overflow: hidden;
+  touch-action: pan-x pan-y;
+  font-family: "Public Sans", Arial, Helvetica, sans-serif;
+  background: var(--white);
+}
+
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+  user-select: none;
+}
+
+.leaflet-tile {
+  border: 0;
+  max-width: none;
+  max-height: none;
+}
+
+.leaflet-pane {
+  z-index: 400;
+}
+
+.leaflet-tile-pane {
+  z-index: 200;
+}
+
+.leaflet-overlay-pane {
+  z-index: 400;
+}
+
+.leaflet-shadow-pane {
+  z-index: 500;
+}
+
+.leaflet-marker-pane {
+  z-index: 600;
+}
+
+.leaflet-tooltip-pane {
+  z-index: 650;
+}
+
+.leaflet-popup-pane {
+  z-index: 700;
+}
+
+.leaflet-control {
+  position: relative;
+  z-index: 800;
+  pointer-events: auto;
+  float: left;
+  clear: both;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.leaflet-top {
+  top: 0;
+}
+
+.leaflet-right {
+  right: 0;
+}
+
+.leaflet-bottom {
+  bottom: 0;
+}
+
+.leaflet-left {
+  left: 0;
+}
+
+.leaflet-right .leaflet-control {
+  float: right;
+  margin-right: 10px;
+}
+
+.leaflet-left .leaflet-control {
+  margin-left: 10px;
+}
+
+.leaflet-top .leaflet-control {
+  margin-top: 10px;
+}
+
+.leaflet-bottom .leaflet-control {
+  margin-bottom: 10px;
+}
+
+.leaflet-control-zoom {
+  border: 1px solid var(--black);
+}
+
+.leaflet-control-zoom a {
+  display: block;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  text-decoration: none;
+  background: var(--white);
+  color: var(--black);
+  border-color: var(--black);
+}
+
+.leaflet-control-attribution {
+  color: var(--black);
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 9px;
+}
+
+.leaflet-control-attribution a {
+  color: var(--black);
+}
+
+#mapStatus {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  z-index: 3;
+  color: var(--black);
+  background: var(--white);
+  font-size: 11px;
+  padding: 2px 4px;
+  display: none;
+}
+
+.mapButton,
+.statusPill {
+  position: absolute;
+  z-index: 5;
+  height: 34px;
+  min-height: 34px;
+  border: 1px solid var(--black);
+  background: var(--white);
+  color: var(--black);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.mapButton {
+  right: 10px;
+  top: 10px;
+  padding: 0 10px;
+}
+
+.statusPill {
+  left: 10px;
+  top: 10px;
+  display: grid;
+  place-items: center;
+  min-width: 48px;
+  padding: 0 8px;
+}
+
+.mapPanel.isFallback #mapView {
+  display: none;
+}
+
+.mapPanel.isFallback #mapStatus {
+  display: block;
+}
+
+.mapPanel.hasTiles #mapStatus {
+  display: none;
+}
+
+.issMarker,
+.cityMarker {
+  display: grid;
+  place-items: center;
+  background: var(--white);
+  color: var(--black);
+  line-height: 1;
+}
+
+.issMarker {
+  width: 42px;
+  height: 34px;
+  display: block;
+  background: transparent;
+  transform-origin: 50% 50%;
+}
+
+.cityMarker {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.rangeMarker {
+  opacity: 0.18;
+}
+
+.telemetryPanel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.metric {
+  min-height: 49px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.metric:nth-child(1),
+.metric:nth-child(2) {
+  border-top: 0;
+}
+
+.metric:nth-child(odd) {
+  border-right: 1px solid var(--line);
+}
+
+.metric.wide {
+  grid-column: 1 / -1;
+  border-right: 0;
+}
+
+.metric span {
+  color: var(--soft);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.metric strong {
+  min-width: 0;
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.passesPage {
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: 0 18px 16px;
+  overflow: hidden;
+}
+
+.radioPanel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.radioPanel div {
+  min-height: 56px;
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  padding: 6px 8px;
+  border-right: 1px solid var(--line);
+}
+
+.radioPanel div:last-child {
+  border-right: 0;
+}
+
+.radioPanel span,
+.passMeta,
+.passKind {
+  color: var(--soft);
+  font-size: 11px;
+}
+
+.radioPanel strong {
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.passesList {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: auto;
+}
+
+.passesList li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.passTime {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.passMeta {
+  margin-top: 4px;
+  line-height: 1.25;
+}
+
+.passKind {
+  align-self: center;
+  min-width: 66px;
+  text-align: right;
+}
+
+.cityPanel {
+  position: absolute;
+  inset: 46px 0 0;
+  z-index: 20;
+  background: var(--black);
+  padding: 10px 24px;
+  overflow: auto;
+}
+
+.cityPanel[hidden],
+.toast[hidden] {
+  display: none;
+}
+
+form {
+  min-height: 100%;
+  display: grid;
+  gap: 11px;
+  align-content: start;
+}
+
+.keyboardButton {
+  justify-self: end;
+  width: 44px;
+  min-height: 32px;
+  border: 1px solid var(--mid);
+  color: var(--white);
+  font-size: 18px;
+}
+
+label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--soft);
+}
+
+input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--white);
+  background: var(--black);
+  color: var(--white);
+  border-radius: 0;
+  padding: 4px 0;
+  font-size: 19px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.presetList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  padding: 4px 0;
+}
+
+.presetList button {
+  min-height: 38px;
+  border: 1px solid var(--mid);
+  font-size: 16px;
+  text-align: left;
+  padding: 0 8px;
+}
+
+.presetList button.isActive {
+  background: var(--white);
+  color: var(--black);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.controls button {
+  min-height: 42px;
+  border: 1px solid var(--mid);
+}
+
+.toast {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 40;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 8px 12px;
+  background: var(--white);
+  color: var(--black);
+  font-size: 15px;
+  text-align: center;
+}
+
+@media (max-width: 340px) {
+  .shell {
+    grid-template-rows: 44px minmax(0, 1fr);
+  }
+
+  .appHeader {
+    grid-template-columns: 68px 1fr 68px;
+    padding-inline: 10px;
+  }
+
+  .headerButton {
+    width: 68px;
+    font-size: 12px;
+  }
+
+  .metric {
+    min-height: 45px;
+    padding-inline: 10px;
+  }
+
+  .metric strong {
+    font-size: 16px;
+  }
+
+  .cityPanel {
+    inset: 44px 0 0;
+    padding-inline: 18px;
+  }
+
+  input {
+    font-size: 18px;
+  }
+
+  .passTime {
+    font-size: 19px;
+  }
+}
