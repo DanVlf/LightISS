@@ -2,7 +2,7 @@
   "expo": {
     "name": "LightISS",
     "slug": "lightiss",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "orientation": "portrait",
     "scheme": "lightiss",
     "newArchEnabled": true,
@@ -10,6 +10,7 @@
     "android": {
       "backgroundColor": "#000000",
       "package": "com.dan.lightiss",
+      "versionCode": 2,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",

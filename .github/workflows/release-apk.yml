@@ -37,8 +37,20 @@ jobs:
 
       - run: chmod +x android/gradlew
 
-      - run: ./gradlew assembleDebug
+      - name: Build release APK
         working-directory: android
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$ANDROID_KEYSTORE_PASSWORD" ] && [ -n "$ANDROID_KEY_ALIAS" ] && [ -n "$ANDROID_KEY_PASSWORD" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > app/lightiss-release.keystore
+            ./gradlew assembleRelease -Pandroid.injected.signing.store.file="$PWD/app/lightiss-release.keystore" -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" -Pandroid.injected.signing.key.password="$ANDROID_KEY_PASSWORD"
+          else
+            ./gradlew assembleRelease
+          fi
 
       - id: meta
         shell: bash
@@ -51,12 +63,12 @@ jobs:
           TAG="$INPUT_TAG"
           if [ "$REF_TYPE" = "tag" ]; then TAG="$REF_NAME"; fi
           if [ -z "$TAG" ]; then TAG="v$VERSION"; fi
-          APK="LightISS-$TAG-debug.apk"
+          APK="LightISS-$TAG.apk"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "apk=$APK" >> "$GITHUB_OUTPUT"
 
-      - run: mkdir -p dist && cp android/app/build/outputs/apk/debug/app-debug.apk "dist/${{ steps.meta.outputs.apk }}"
+      - run: mkdir -p dist && cp android/app/build/outputs/apk/release/app-release.apk "dist/${{ steps.meta.outputs.apk }}"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -68,4 +80,4 @@ jobs:
           tag_name: ${{ steps.meta.outputs.tag }}
           name: LightISS ${{ steps.meta.outputs.tag }}
           files: dist/${{ steps.meta.outputs.apk }}
-          body: LightISS debug APK built by GitHub Actions.
+          body: LightISS release APK built by GitHub Actions.
