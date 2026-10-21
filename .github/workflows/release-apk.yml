@@ -1,0 +1,80 @@
+name: APK Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag, for example v1.0.0
+        required: false
+        default: ""
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Android SDK components
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "build-tools;35.0.0" > /dev/null
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build release APK
+        run: |
+          chmod +x gradlew
+          ./gradlew :tool:assembleRelease -DlightSdk.toolOnly=true
+
+      - id: meta
+        shell: bash
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          VERSION=$(grep -oP 'versionName = "\K[^"]+' tool/lighttool.toml)
+          CODE=$(grep -oP 'versionCode = \K[0-9]+' tool/lighttool.toml)
+          TAG="$INPUT_TAG"
+          if [ "$REF_TYPE" = "tag" ]; then TAG="$REF_NAME"; fi
+          if [ -z "$TAG" ]; then TAG="v$VERSION"; fi
+          APK="LightISS-$TAG.apk"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "apk=$APK" >> "$GITHUB_OUTPUT"
+
+      - run: |
+          mkdir -p dist
+          cp tool/build/outputs/apk/release/tool-release.apk "dist/${{ steps.meta.outputs.apk }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.apk }}
+          path: dist/${{ steps.meta.outputs.apk }}
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: LightISS ${{ steps.meta.outputs.tag }}
+          files: dist/${{ steps.meta.outputs.apk }}
+          body: |
+            LightISS ${{ steps.meta.outputs.version }} (versionCode ${{ steps.meta.outputs.code }})
+
+            Native Light SDK tool, signed with the light-sdk development key.
+
+            Note: uninstall any earlier Expo-based LightISS build first — it used a
+            different signing key, so it cannot be updated in place.
