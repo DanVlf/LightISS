@@ -1,44 +1,73 @@
 # LightISS
 
-LightISS is a minimal monochrome ISS tracker for a Light Phone III style workflow.
+A minimal monochrome ISS tracker, built as a native [Light SDK](https://github.com/lightphone/light-sdk)
+tool for the Light Phone III.
 
-The app follows the LightOS-inspired direction from `vandamd/light-template` while keeping the same simple shape as `Places`: a browser prototype in `src/web` and an Expo WebView wrapper for Android/APK testing. The interface is intentionally small: choose a city, keep that city as the map center, watch the ISS position, see distance, bearing, altitude, speed, and open a pass list for visual and radio/day passes.
+Track the International Space Station from a place that matters to you: pick a
+city (or use your device location), watch the station move on a quiet world
+map with its ground track and radio footprint, and see the next radio and
+naked-eye passes overhead.
 
-## Run
+## Tool
 
-Open `src/web/index.html` in a browser for the prototype.
+The tool lives in `tool/` and is built with the Light SDK:
 
-## Android APK Test
+- **Kotlin + Compose + MVVM**, restricted to the SDK's allowed APIs
+- `HomeScreen` — world map (pan/zoom), live station stats, status (LIVE / SYNC / OLD / OFF)
+- `PassesScreen` — upcoming passes over your place, marked `VISIBLE` when the
+  station is sunlit while your sky is dark
+- `LocationScreen` — city presets, city search, manual coordinates, device location
 
-The APK wrapper is defined by `App.tsx`, `app.json`, `package.json`, and `src/webContent.ts`.
-
-Useful commands:
-
-```powershell
-npm install
-npm run sync-web
-npm run dev
-npm run prebuild:android
-npm run apk:debug
-```
-
-## GitHub Release
-
-APK releases are built by GitHub Actions.
-
-1. Push to `main`
-2. Push a tag like `v0.1.0`
-3. GitHub Actions runs `APK Release`
-4. The APK is attached to the GitHub Release
-
-You can also open GitHub Actions and run `APK Release` manually.
-
-The current workflow builds a debug APK and attaches it to a GitHub Release. For a production signed APK, add Android keystore secrets and change the Gradle step to `assembleRelease`.
+The map is drawn from a bundled simplified coastline (Natural Earth) — no map
+tiles, no tracking, no accounts.
 
 ## Data Sources
 
-- Current ISS data uses `https://api.wheretheiss.at/v1/satellites/25544`
-- Sampled orbit data uses `https://api.wheretheiss.at/v1/satellites/25544/positions`
-- City search uses OpenStreetMap Nominatim
+- ISS position and orbit samples: [wheretheiss.at](https://wheretheiss.at)
+- City search: OpenStreetMap Nominatim
 
-The app keeps the last city and ISS data in local storage. If map tiles or ISS data are unavailable, it falls back to a local monochrome map sketch with the chosen city at the center.
+Only the ISS position requests and (when you search) the city name leave the
+device. Nothing is collected, stored or shared beyond your tool's own local
+data.
+
+## Building
+
+Open the project in Android Studio (or use `./gradlew` directly) and run:
+
+```sh
+./gradlew :tool:assembleDebug
+```
+
+To test on the LightOS emulator, switch `tool/lighttool.toml` to the emulator
+server package:
+
+```toml
+serverPackage = "com.thelightphone.sdk.emulator"
+```
+
+then build with `./gradlew :tool:installDebug -DlightSdk.allowAltServerPackage=true`
+(revert to `com.lightos` before submitting). See `docs/system_app` for setting
+up the emulator, and the SDK README for submitting tools through the Light
+dashboard.
+
+Tests:
+
+```sh
+./gradlew :tool:test
+```
+
+## How It Works
+
+- The current ISS position is polled while the tool is open (every 15 s) and
+  cached in local storage, so the last known state is available offline.
+- The orbit is sampled every 5 minutes from 30 min in the past to 8 h ahead;
+  passes over your place are reconstructed from those samples using footprint
+  range, look angle and solar elevation — the same approach as the original
+  web prototype.
+- Everything is monochrome and sized for the Light Phone III e-ink display.
+
+## Credits
+
+- Land outlines: [Natural Earth](https://www.naturalearthdata.com/) (public domain)
+- ISS data: wheretheiss.at
+- Built on the [light-sdk](https://github.com/lightphone/light-sdk) scaffold
